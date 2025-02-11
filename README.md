@@ -71,3 +71,7 @@ This package uses:
 ## License
 
 MIT
+
+## About
+
+Made by [Romain Nugou](https://romainnugou.com).
