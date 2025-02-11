@@ -1,0 +1,35 @@
+{
+  "name": "mesh-gradient-ts",
+  "version": "1.0.2",
+  "description": "A lightweight and customizable mesh gradient animation (or static image) generator for web applications. With configurable colors, movements and effects.",
+  "keywords": [
+    "mesh",
+    "gradient",
+    "animation",
+    "background",
+    "canvas"
+  ],
+  "author": "Romain Nugou",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/mesh-gradient.cjs.js",
+  "module": "dist/mesh-gradient.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/romainnugou/mesh-gradient-ts.git"
+  }
+}
