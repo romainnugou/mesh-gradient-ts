@@ -56,7 +56,13 @@ The MeshGradient constructor accepts the following options:
 |--------|------------|-------------|
 | `pause()` | None | Pauses the animation |
 | `resume()` | None | Resumes the animation |
+| `setBackgroundColor()` | `color: string` | Updates the background color (hex format) |
 | `setColors()` | `colors: string[]` | Updates the gradient colors |
+| `setDensity()` | `density: number` | Updates the number of gradient points |
+| `setRadius()` | `radius: number` | Updates the radius of gradient points |
+| `setBlurAmount()` | `blurAmount: number` | Updates the blur effect amount |
+| `setSpeed()` | `speed: number` | Updates the movement speed of gradient points |
+| `setNoiseIntensity()` | `noiseIntensity: number` | Updates the noise intensity (0-255) |
 | `setMorphSpeed()` | `speed: number` | Updates the morphing speed (0-1) |
 | `exportImage()` | `format?: 'png' \| 'jpeg'`  `quality?: number`  `width?: number`  `height?: number` | Exports the current gradient as an image |
 

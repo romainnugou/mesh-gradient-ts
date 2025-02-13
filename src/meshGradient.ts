@@ -4,7 +4,7 @@ export class MeshGradient {
   private readonly offscreenCanvas: OffscreenCanvas;
   private readonly offscreenCtx: OffscreenCanvasRenderingContext2D;
   
-  private readonly backgroundColor: string;
+  private backgroundColor: string;
   private colors: string[];
   private readonly points: {
     x: number;
@@ -13,13 +13,13 @@ export class MeshGradient {
     dy: number;
     color: string;
   }[];
-  private readonly radius: number;
-  private readonly blurAmount: number;
-  private readonly noiseIntensity: number;
+  private radius: number;
+  private blurAmount: number;
+  private noiseIntensity: number;
 
   private animationFrame: number | null = null;
   private lastFrameTime = performance.now();
-  private readonly speed: number;
+  private speed: number;
   private morphSpeed: number;
 
   private readonly isStatic: boolean;
@@ -289,6 +289,18 @@ export class MeshGradient {
   }
 
   /**
+   * Update the background color
+   * @param color New background color (hex format)
+   */
+  public setBackgroundColor(color: string) {
+    if (!/^#([0-9A-F]{3}){1,2}$/i.test(color)) {
+      console.warn("Invalid background color. Must be a hex value.");
+      return;
+    }
+    this.backgroundColor = color;
+  }
+
+  /**
    * Set the colors
    * @param newColors 
    */
@@ -307,6 +319,78 @@ export class MeshGradient {
     this.points.forEach((point, i) => {
       point.color = this.colors[i % this.colors.length];
     });
+  }
+
+  /**
+   * Update the density (number of gradient points)
+   * @param density New density value (positive integer)
+   */
+  public setDensity(density: number) {
+    if (density <= 0 || !Number.isInteger(density)) {
+      console.warn("Density must be a positive integer.");
+      return;
+    }
+    this.init(density);
+  }
+
+  /**
+   * Update the radius of gradient points
+   * @param radius New radius value (positive number)
+   */
+  public setRadius(radius: number) {
+    if (radius < 0) {
+      console.warn("Radius must be a positive number.");
+      return;
+    }
+    this.radius = radius;
+  }
+
+  /**
+   * Update the blur effect amount
+   * @param blurAmount New blur amount (positive number)
+   */
+  public setBlurAmount(blurAmount: number) {
+    if (blurAmount < 0) {
+      console.warn("Blur amount must be a positive number.");
+      return;
+    }
+    this.blurAmount = blurAmount;
+  }
+
+  /**
+   * Update the speed of gradient points movement
+   * @param speed New speed value (positive number)
+   */
+  public setSpeed(speed: number) {
+    if (speed < 0) {
+      console.warn("Speed must be a positive number.");
+      return;
+    }
+    this.speed = speed;
+    this.points.forEach(point => {
+      point.dx = (Math.random() - 0.5) * this.speed;
+      point.dy = (Math.random() - 0.5) * this.speed;
+    });
+  }
+
+  /**
+   * Update the noise intensity
+   * @param noiseIntensity New noise intensity value (0-255)
+   */
+  public setNoiseIntensity(noiseIntensity: number) {
+    if (noiseIntensity < 0 || noiseIntensity > 255) {
+      console.warn("Noise intensity must be between 0 and 255.");
+      return;
+    }
+    this.noiseIntensity = noiseIntensity;
+  }
+
+  /**
+   * Set the morph speed
+   * @param speed 
+   */
+  public setMorphSpeed(speed: number) {
+    this.morphSpeed = Math.max(0, Math.min(1, speed)); // Clamp between 0 and 1
   }
   
   /**
@@ -362,13 +446,5 @@ export class MeshGradient {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
-
-  /**
-   * Set the morph speed
-   * @param speed 
-   */
-  public setMorphSpeed(speed: number) {
-    this.morphSpeed = Math.max(0, Math.min(1, speed)); // Clamp between 0 and 1
   }
 }
