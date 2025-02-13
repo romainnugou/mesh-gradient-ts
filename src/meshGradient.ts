@@ -3,6 +3,8 @@ export class MeshGradient {
   private readonly ctx: CanvasRenderingContext2D;
   private readonly offscreenCanvas: OffscreenCanvas;
   private readonly offscreenCtx: OffscreenCanvasRenderingContext2D;
+
+  private readonly maxFPS: number = 30;
   
   private backgroundColor: string;
   private colors: string[];
@@ -76,6 +78,8 @@ export class MeshGradient {
    * @param density 
    */
   private init(density: number) {
+    if (density > 10) density = 10;
+
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.offscreenCanvas.width = this.canvas.width;
@@ -102,11 +106,12 @@ export class MeshGradient {
     const now = performance.now();
     const deltaTime = now - this.lastFrameTime;
 
-    // Limit FPS if needed
-    if (deltaTime < 16) {
+    // Avoid unnecessary calculations if already at max FPS
+    if (deltaTime < 1000 / this.maxFPS) {
       this.animationFrame = requestAnimationFrame(() => this.animate());
       return;
     }
+
     this.lastFrameTime = now;
 
     // Update points if needed
@@ -330,8 +335,43 @@ export class MeshGradient {
       console.warn("Density must be a positive integer.");
       return;
     }
-    this.init(density);
+
+    if (density > 10) {
+      console.warn("Density is limited to a maximum of 10 points.");
+      density = 10;
+    }
+
+    this.pause();
+
+    const currentDensity = this.points.length;
+
+    if (density > currentDensity) {
+      // Add only the points that will be visible
+      for (let i = currentDensity; i < density; i++) {
+        this.points.push({
+          x: Math.random() * this.canvas.width,
+          y: Math.random() * this.canvas.height,
+          dx: (Math.random() - 0.5) * this.speed,
+          dy: (Math.random() - 0.5) * this.speed,
+          color: this.colors[i % this.colors.length],
+        });
+      }
+    } else {
+      // Remove points progressively to avoid freezing
+      const interval = setInterval(() => {
+        if (this.points.length > density) {
+          this.points.pop();
+        } else {
+          clearInterval(interval);
+          this.resume();
+        }
+      }, 5);
+      return;
+    }
+
+    this.resume();
   }
+
 
   /**
    * Update the radius of gradient points

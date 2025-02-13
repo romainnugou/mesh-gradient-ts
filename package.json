@@ -1,6 +1,6 @@
 {
   "name": "mesh-gradient-ts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A lightweight and customizable mesh gradient animation (or static image) generator for web applications. With configurable colors, movements and effects.",
   "keywords": [
     "mesh",
