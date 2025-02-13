@@ -74,6 +74,13 @@ This package uses:
 - OffscreenCanvas
 - RequestAnimationFrame
 
+## Build
+
+```bash
+npm run build
+npx tsc --declaration --emitDeclarationOnly --outDir dist
+```
+
 ## License
 
 MIT
