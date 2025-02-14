@@ -10,7 +10,7 @@ This package provides a simple way to create animated mesh gradients using HTML5
 
 ## Preview
 
-![Preview](https://github.com/romainnugou/mesh-gradient-js/blob/main/public/preview.jpeg)
+![Preview](https://raw.githubusercontent.com/romainnugou/mesh-gradient-ts/refs/heads/main/public/preview.jpeg)
 
 ## Installation
 
