@@ -8,7 +8,7 @@ new MeshGradient(canvas, {
   backgroundColor: '#222222',
   colors: ['#1034a6', '#7851a9', '#191970'], 
   density: 5, 
-  radius: 1000, 
+  radius: 800, 
   blurAmount: 100,
   noiseIntensity: 10,
   speed: 10, 

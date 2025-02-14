@@ -8,6 +8,10 @@ With configurable colors, movements and effects.
 
 This package provides a simple way to create animated mesh gradients using HTML5 Canvas. It generates smooth, organic-looking gradients that can animate and morph between colors. Perfect for modern web designs, hero backgrounds, or any UI element requiring dynamic visual background.
 
+## Preview
+
+![Preview](https://github.com/romainnugou/mesh-gradient-js/blob/main/public/preview.jpeg)
+
 ## Installation
 
 ```bash
@@ -40,7 +44,7 @@ The MeshGradient constructor accepts the following options:
 |-----------|------|---------|-------------|
 | `backgroundColor` | string | '#222222' | Background color in hex format |
 | `colors` | string[] | ['#1034a6', '#7851a9', '#191970'] | Array of colors in hex format that will be used for the gradient points |
-| `density` | number | 5 | Number of gradient points to generate (max 10) |
+| `density` | number | 5 | Number of gradient points to generate (max 20) |
 | `radius` | number | 1000 | Radius of each gradient point |
 | `blurAmount` | number | 100 | Blur intensity of the gradients |
 | `noiseIntensity` | number | 10 | Intensity of the noise effect (0-255) |

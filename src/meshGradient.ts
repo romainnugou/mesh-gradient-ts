@@ -42,7 +42,7 @@ export class MeshGradient {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d")!;
     this.offscreenCanvas = new OffscreenCanvas(window.innerWidth, window.innerHeight);
-    this.offscreenCtx = this.offscreenCanvas.getContext('2d')!;
+    this.offscreenCtx = this.offscreenCanvas.getContext("2d", { willReadFrequently: true })!;
 
     // Points, colors and effects
     this.backgroundColor = options.backgroundColor ?? '#222222';
@@ -60,7 +60,7 @@ export class MeshGradient {
     this.isStatic = options.isStatic ?? false;
 
     // Init canvas
-    this.init(options.density ?? 10);
+    this.init(options.density ?? 5);
 
     // Render (static or animated)
     if (!this.isStatic) {
@@ -78,7 +78,7 @@ export class MeshGradient {
    * @param density 
    */
   private init(density: number) {
-    if (density > 10) density = 10;
+    if (density > 20) density = 20;
 
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
@@ -128,7 +128,7 @@ export class MeshGradient {
 
       // Add noise if needed
       if(this.noiseIntensity > 0) { 
-        this.addNoise();
+        this.addNoise(this.offscreenCtx);
       }
 
       // Draw the image on the main canvas
@@ -151,7 +151,7 @@ export class MeshGradient {
   
     // Add noise if needed
     if (this.noiseIntensity > 0) { 
-      this.addNoise();
+      this.addNoise(this.offscreenCtx);
     }
   
     // Draw the image on the main canvas
@@ -247,10 +247,11 @@ export class MeshGradient {
   }
 
   /**
-   * Add noise to the image
+   * Add noise to a given canvas context
+   * @param ctx CanvasRenderingContext2D where noise should be applied
    */
-  private addNoise() {
-    const imageData = this.offscreenCtx.getImageData(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
+  private addNoise(ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D) {
+    const imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
     const pixels = imageData.data;
   
     for (let i = 0; i < pixels.length; i += 4) {
@@ -260,8 +261,8 @@ export class MeshGradient {
       pixels[i + 2] += rand;  // Blue
     }
   
-    this.offscreenCtx.putImageData(imageData, 0, 0);
-  }
+    ctx.putImageData(imageData, 0, 0);
+  }  
 
   /**
    * Resize the canvas
@@ -336,9 +337,9 @@ export class MeshGradient {
       return;
     }
 
-    if (density > 10) {
-      console.warn("Density is limited to a maximum of 10 points.");
-      density = 10;
+    if (density > 20) {
+      console.warn("Density is limited to a maximum of 20 points.");
+      density = 20;
     }
 
     this.pause();
@@ -371,7 +372,6 @@ export class MeshGradient {
 
     this.resume();
   }
-
 
   /**
    * Update the radius of gradient points
@@ -443,41 +443,52 @@ export class MeshGradient {
   public exportImage(format: "png" | "jpeg" = "png", quality: number = 1, width?: number, height?: number) {
     if (!["png", "jpeg"].includes(format)) {
       console.warn("Invalid format. Only 'png' or 'jpeg' are supported.");
+      return;
     }
-  
+
     // Export width and height
     const exportWidth = width ?? this.canvas.width;
     const exportHeight = height ?? this.canvas.height;
-  
+
     // Create a temporary canvas for the export
     const offscreenCanvas = document.createElement("canvas");
     offscreenCanvas.width = exportWidth;
     offscreenCanvas.height = exportHeight;
-    const ctx = offscreenCanvas.getContext("2d")!;
-  
+    const ctx = offscreenCanvas.getContext("2d", { willReadFrequently: true });
+
+    if (!ctx) {
+      console.error("exportImage: Could not get canvas context.");
+      return;
+    }
+
     // Apply the background color
     ctx.fillStyle = this.backgroundColor;
     ctx.fillRect(0, 0, exportWidth, exportHeight);
-  
+
     // Draw the gradients on the temporary canvas
     this.points.forEach((point) => {
       const scaleX = exportWidth / this.canvas.width;
       const scaleY = exportHeight / this.canvas.height;
-  
+
       const gradient = ctx.createRadialGradient(
         point.x * scaleX, point.y * scaleY, 0,
         point.x * scaleX, point.y * scaleY, this.radius * scaleX
       );
-  
+
       gradient.addColorStop(0, point.color);
       gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-  
+
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.arc(point.x * scaleX, point.y * scaleY, this.radius * scaleX, 0, Math.PI * 2);
       ctx.fill();
     });
-  
+
+    // ✅ Ajouter le bruit à l'export
+    if (this.noiseIntensity > 0) {
+      this.addNoise(ctx);
+    }
+
     // Convert to Data URL and download the image
     const dataUrl = offscreenCanvas.toDataURL(`image/${format}`, quality);
     const link = document.createElement("a");
